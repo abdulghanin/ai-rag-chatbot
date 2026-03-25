@@ -1,21 +1,24 @@
+import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_ollama import OllamaEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
-import os
 
-# تحميل ملفات PDF
-docs_path = "docs"
+BASE_DIR = os.path.dirname(__file__)
+DOCS_PATH = os.path.join(BASE_DIR, "docs")
+
+if not os.path.exists(DOCS_PATH):
+    raise Exception("docs folder not found")
+
 documents = []
 
-for file in os.listdir(docs_path):
+for file in os.listdir(DOCS_PATH):
     if file.endswith(".pdf"):
-        loader = PyPDFLoader(os.path.join(docs_path, file))
+        loader = PyPDFLoader(os.path.join(DOCS_PATH, file))
         documents.extend(loader.load())
 
 print(f"Loaded {len(documents)} pages")
 
-# تقسيم النص
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=500,
     chunk_overlap=50
@@ -25,16 +28,15 @@ chunks = text_splitter.split_documents(documents)
 
 print(f"Created {len(chunks)} chunks")
 
-# إنشاء embeddings
-embeddings = OllamaEmbeddings(
-    model="nomic-embed-text"
+# embeddings 
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
-# إنشاء vector database
 vector_db = Chroma.from_documents(
     documents=chunks,
     embedding=embeddings,
-    persist_directory="vector_db"
+    persist_directory=os.path.join(BASE_DIR, "../vector_db")
 )
 
 print("Embeddings stored successfully")

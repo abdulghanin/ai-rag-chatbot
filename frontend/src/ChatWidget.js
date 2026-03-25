@@ -7,28 +7,36 @@ export default function ChatWidget() {
 const [open,setOpen]=useState(false)
 const [messages,setMessages]=useState([])
 const [input,setInput]=useState("")
+const [loading, setLoading] = useState(false);
 
-const sendMessage=async()=>{
+const sendMessage = async () => {
+  if (!input) return;
 
-if(!input) return
+  const userMsg = { role: "user", text: input };
+  setMessages((prev) => [...prev, userMsg]);
+  setInput("");
+  setLoading(true);
 
-const userMsg={role:"user",text:input}
+  try {
+    const res = await axios.post(
+      "http://127.0.0.1:8000/chat",
+      { message: userMsg.text }
+    );
 
-setMessages(prev=>[...prev,userMsg])
+    setMessages((prev) => [
+      ...prev,
+      { role: "bot", text: res.data.answer },
+    ]);
 
-const res=await axios.post("http://127.0.0.1:8000/chat",{
-message:input
-})
+  } catch (err) {
+    setMessages((prev) => [
+      ...prev,
+      { role: "bot", text: "⚠️ Server error" },
+    ]);
+  }
 
-const botMsg={
-role:"bot",
-text:res.data.answer
-}
-
-setMessages(prev=>[...prev,botMsg])
-
-setInput("")
-}
+  setLoading(false);
+};
 
 return(
 
@@ -72,7 +80,7 @@ Online
 </div>
 
 {/* messages */}
-
+{}
 <div className="flex-1 overflow-y-auto p-4 space-y-4">
 
 {messages.map((msg,i)=>(
@@ -97,6 +105,14 @@ msg.role==="user"
 </div>
 
 ))}
+
+{loading && (
+<div className="text-left">
+<div className="inline-block bg-gray-200 px-4 py-2 rounded-lg">
+Typing...
+</div>
+</div>
+)}
 
 </div>
 
@@ -136,13 +152,15 @@ value={input}
 onChange={(e)=>setInput(e.target.value)}
 placeholder="Type your question..."
 className="flex-1 border rounded px-3 py-2"
+disabled={loading}
 />
 
 <button
 onClick={sendMessage}
 className="bg-indigo-600 text-white px-4 py-2 rounded"
+disabled={loading}
 >
-Send
+{loading ? "Sending..." : "Send"}
 </button>
 
 </div>

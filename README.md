@@ -31,3 +31,12 @@ An AI-powered Retrieval-Augmented Generation (RAG) chatbot built with FastAPI, L
 - Host the backend on a server (e.g., Heroku)
 - Host the frontend build on Netlify/Vercel
 - Update widget script with live URLs
+
+## Environment Variables
+
+- `BACKEND_API_KEY`: API key required by backend `/chat` endpoint
+- `REACT_APP_FRONTEND_API_KEY`: frontend key sent in `x-api-key` header
+
+## Health Check
+
+- `GET /health` - returns `{"status": "ok"}` to verify server is running

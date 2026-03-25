@@ -2,28 +2,24 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from .rag import ask_question
+from app.rag import ask_question
 
 app = FastAPI()
 
-# إضافة CORS
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3002"],  # السماح بالمنافذ المختلفة
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# نموذج الطلب
 class ChatRequest(BaseModel):
     message: str
 
-
-# endpoint
 @app.post("/chat")
-
-def chat(request: ChatRequest):
+async def chat(request: ChatRequest):
 
     answer = ask_question(request.message)
 
@@ -31,3 +27,7 @@ def chat(request: ChatRequest):
         "question": request.message,
         "answer": answer
     }
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
