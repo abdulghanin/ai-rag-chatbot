@@ -1,0 +1,8 @@
+build:
+  docker:
+    systemPackages:
+      - python3-dev
+    pythonVersion: 3.11
+runtime:
+  name: python3
+  command: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
