@@ -18,7 +18,8 @@ const sendMessage = async () => {
   setLoading(true);
 
   try {
-    const API_URL = process.env.REACT_APP_BACKEND_URL || "http://127.0.0.1:8000";
+    const API_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8001";
+  
     const res = await axios.post(
       `${API_URL}/chat`,
       { message: userMsg.text }
