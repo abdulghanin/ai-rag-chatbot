@@ -8,10 +8,13 @@ from app.config import GROQ_API_KEY
 BASE_DIR = os.path.dirname(__file__)
 
 # LLM
-llm = ChatGroq(
-    groq_api_key=GROQ_API_KEY,
-    model_name="llama-3.3-70b-versatile"
-)
+if GROQ_API_KEY:
+    llm = ChatGroq(
+        groq_api_key=GROQ_API_KEY,
+        model_name="llama-3.3-70b-versatile"
+    )
+else:
+    llm = None
 
 # Embeddings
 embeddings = HuggingFaceEmbeddings(
@@ -46,6 +49,9 @@ Answer:
 )
 
 def ask_question(question: str):
+
+    if not llm:
+        return "⚠️ AI service is not configured. Please set GROQ_API_KEY in your environment."
 
     docs = retriever.invoke(question)
 
