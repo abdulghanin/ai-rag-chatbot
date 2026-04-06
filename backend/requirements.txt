@@ -5,8 +5,9 @@ langchain-community
 langchain-core
 langchain-chroma
 langchain-huggingface
-langchain-groq
+langchain-google-genai
 chromadb
 pypdf
 sentence-transformers
 python-dotenv
+google-generativeai
