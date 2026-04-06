@@ -17,25 +17,19 @@ const sendMessage = async () => {
   setInput("");
   setLoading(true);
 
-  try {
-    const API_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8001";
-  
-    const res = await axios.post(
-      `${API_URL}/chat`,
-      { message: userMsg.text }
-    );
+ const API_URL =
+  process.env.REACT_APP_BACKEND_URL ||
+  "https://ai-rag-chatbot-oy36.onrender.com";
 
-    setMessages((prev) => [
-      ...prev,
-      { role: "bot", text: res.data.answer },
-    ]);
+const res = await axios.post(
+  `${API_URL}/chat`,
+  { message: userMsg.text }
+);
 
-  } catch (err) {
-    setMessages((prev) => [
-      ...prev,
-      { role: "bot", text: "⚠️ Server error" },
-    ]);
-  }
+setMessages((prev) => [
+  ...prev,
+  { role: "bot", text: res.data.reply }, // 
+]);
 
   setLoading(false);
 };
