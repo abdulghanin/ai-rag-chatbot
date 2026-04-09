@@ -37,6 +37,7 @@ llm = ChatGroq(
 def ask_question(question: str):
     try:
         docs = retriever.invoke(question)
+        
 
         # fallback لو مافي نتائج
         if not docs:
