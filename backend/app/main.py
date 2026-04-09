@@ -1,12 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-
 from app.rag import ask_question
 
 app = FastAPI()
 
-# CORS configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -20,13 +18,12 @@ class ChatRequest(BaseModel):
 
 @app.post("/chat")
 async def chat(request: ChatRequest):
-
     answer = ask_question(request.message)
+    return {"answer": answer}
 
-    return {
-        "question": request.message,
-        "answer": answer
-    }
+@app.get("/")
+def root():
+    return {"message": "RAG API is running 🚀"}
 
 @app.get("/health")
 def health():
