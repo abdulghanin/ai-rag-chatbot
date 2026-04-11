@@ -9,36 +9,36 @@ export default function ChatWidget() {
   const [input,setInput]=useState("")
   const [loading, setLoading] = useState(false);
 
-  const sendMessage = async () => {
-    if (!input) return;
+ const sendMessage = async () => {
+  if (!input) return;
 
-    const userMsg = { role: "user", text: input };
-    setMessages((prev) => [...prev, userMsg]);
-    setInput("");
-    setLoading(true);
+  const userMsg = { role: "user", text: input };
+  setMessages((prev) => [...prev, userMsg]);
+  setInput("");
+  setLoading(true);
 
-    try {
-      const API_URL = "http://localhost:8000";
+  try {
+    const API_URL = "https://ai-rag-chatbot-euw3.onrender.com";
 
-      const res = await axios.post(
-        `${API_URL}/chat`,
-        { message: userMsg.text }
-      );
+    const res = await axios.post(
+      `${API_URL}/chat`,
+      { message: userMsg.text }
+    );
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "bot", text: res.data.answer } // ✅ FIX
-      ]);
+    setMessages((prev) => [
+      ...prev,
+      { role: "bot", text: res.data.answer }
+    ]);
 
-    } catch (err) {
-      setMessages((prev) => [
-        ...prev,
-        { role: "bot", text: "⚠️ Server error" }
-      ]);
-    }
+  } catch (err) {
+    setMessages((prev) => [
+      ...prev,
+      { role: "bot", text: "⚠️ Server error" }
+    ]);
+  }
 
-    setLoading(false);
-  };
+  setLoading(false);
+};
 
   return(
     <div>
