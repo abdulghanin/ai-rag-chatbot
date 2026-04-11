@@ -15,10 +15,12 @@ INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 # Init Pinecone
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
+
+index = pc.Index(INDEX_NAME)
+
 # 📁 FIX PATH 
 BASE_DIR = os.path.dirname(__file__)
 DOCS_PATH = os.path.join(BASE_DIR, "../docs")
-
 
 if not os.path.exists(DOCS_PATH):
     raise Exception(f"❌ docs folder not found at: {DOCS_PATH}")
@@ -33,7 +35,7 @@ for file in os.listdir(DOCS_PATH):
 
 print(f"📄 Loaded {len(documents)} pages")
 
-
+# Split
 splitter = RecursiveCharacterTextSplitter(
     chunk_size=500,
     chunk_overlap=50
@@ -49,10 +51,11 @@ embeddings = HuggingFaceEmbeddings(
 )
 
 
-PineconeVectorStore.from_documents(
-    documents=chunks,
-    embedding=embeddings,
-    index_name=INDEX_NAME
+vectorstore = PineconeVectorStore(
+    index=index,
+    embedding=embeddings
 )
+
+vectorstore.add_documents(chunks)
 
 print("✅ Uploaded to Pinecone")

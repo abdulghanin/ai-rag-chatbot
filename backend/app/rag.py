@@ -14,15 +14,16 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Init Pinecone
 pc = Pinecone(api_key=PINECONE_API_KEY)
+index = pc.Index(INDEX_NAME)
 
 # Embeddings 
 embeddings = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
-# Vector DB
-vectorstore = PineconeVectorStore.from_existing_index(
-    index_name=INDEX_NAME,
+# Vector DB 
+vectorstore = PineconeVectorStore(
+    index=index,
     embedding=embeddings
 )
 
@@ -31,76 +32,42 @@ retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
 # LLM 
 llm = ChatGroq(
     groq_api_key=GROQ_API_KEY,
-    model_name="llama-3.3-70b-versatile"
+    model_name="llama-3.3-70b-versatile",
+    temperature=0  
 )
 
 def ask_question(question: str):
     try:
         docs = retriever.invoke(question)
-        
-
-        # fallback لو مافي نتائج
-        if not docs:
-            return "I don't know. Please try asking in a different way."
-
-        context = "\n".join([doc.page_content for doc in docs])
-
-        prompt = f"""
-You are a professional real estate AI assistant for "Luxury Estates Dubai".
-
-Your role:
-- Help users find, buy, rent, and understand properties in Dubai.
-- Act like an expert real estate agent.
-
-Rules:
-- Answer ONLY from the provided context.
-- If the answer is not found, say: "I don't know".
-- Do NOT make up information.
-- Keep answers clear and structured.
-- Use bullet points when helpful.
-
-Behavior:
-- If user asks about properties → suggest options with details (price, location, size).
-- If user asks about process → explain step-by-step.
-- If user shows interest → suggest next step (schedule visit, contact agent).
-
-Context:
-{context}
-
-User Question:
-{question}
-
-Answer:
-"""
-
-        response = llm.invoke(prompt)
-        return response.content
-
-    except Exception as e:
-        return f"⚠️ Error: {str(e)}"
-    try:
-        docs = retriever.invoke(question)  # 
 
         if not docs:
             return "I don't know"
 
-        context = "\n".join([doc.page_content for doc in docs])
+        context = "\n\n".join([doc.page_content for doc in docs])
 
         prompt = f"""
-You are an AI assistant.
+You are a professional real estate AI assistant for "Luxury Estates Dubai".
 
-Answer ONLY from the context below.
-If the answer is not in the context, say: "I don't know".
+STRICT RULES:
+- Answer ONLY using the context below
+- If answer not found → say: I don't know
+- Do NOT guess or add information
 
-Context:
+STYLE:
+- Clear and professional
+- Use bullet points if needed
+
+CONTEXT:
 {context}
 
-Question:
+QUESTION:
 {question}
+
+FINAL ANSWER:
 """
 
         response = llm.invoke(prompt)
-        return response.content
+        return response.content.strip()
 
     except Exception as e:
         return f"⚠️ Error: {str(e)}"
