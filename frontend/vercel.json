@@ -16,6 +16,6 @@
     }
   ],
   "env": {
-    "REACT_APP_BACKEND_URL": "https://ai-rag-chatbot-backend.onrender.com"
+    "REACT_APP_BACKEND_URL": "https://ai-rag-chatbot-euw3.onrender.com"
   }
 }
