@@ -1,43 +1,21 @@
-🤖 AI RAG Chatbot (Pinecone + Groq + FastAPI + React)
-A full‑stack Retrieval‑Augmented Generation (RAG) chatbot using FastAPI, LangChain, Pinecone, Groq Llama 3.3 70B, and a modern React chat widget.
-Supports PDF ingestion, semantic search, and real‑time conversational AI.
+# AI RAG Chatbot (Pinecone + Groq + FastAPI + React)
 
-🚀 Features
-🔍 Retrieval‑Augmented Generation (RAG)
+A full-stack Retrieval-Augmented Generation (RAG) chatbot with PDF ingestion, semantic search, and a React chat widget.
 
-📄 PDF ingestion + text chunking
+## 🚀 Features
+- Retrieval-Augmented Generation (RAG)
+- PDF ingestion and text chunking
+- Fast vector search with Pinecone
+- Groq Llama 3.3 70B inference via Groq API
+- React chat widget UI
+- Deploy backend to Render and frontend to Vercel
 
-⚡ Fast vector search using Pinecone
+## 🧠 Tech Stack
+- Backend: FastAPI, LangChain, Pinecone, Groq, HuggingFace embeddings
+- Frontend: React, Axios, Tailwind CSS
 
-🧠 Groq Llama 3.3 70B for ultra‑fast inference
-
-💬 React chat widget (embeddable anywhere)
-
-🎨 Tailwind CSS UI
-
-🌍 Real‑world example: Real Estate AI Assistant
-
-🧠 Tech Stack
-Backend
-FastAPI
-
-LangChain
-
-Pinecone
-
-HuggingFace Embeddings
-
-Groq API
-
-Frontend
-React
-
-Axios
-
-Tailwind CSS
-
-📁 Project Structure
-Code
+## 📁 Project Structure
+```
 ai-rag-chatbot/
 │
 ├── backend/
@@ -49,107 +27,128 @@ ai-rag-chatbot/
 │   │   └── ingest.py
 │   ├── docs/          # PDF files go here
 │   ├── requirements.txt
-│   ├── start.sh
-│   └── render.yaml
+│   └── Dockerfile
 │
-└── frontend/
-    ├── src/
-    ├── public/
-    ├── package.json
-    └── vite.config.js
-⚙️ Backend Setup (FastAPI)
-1. Create virtual environment
-bash
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── App.js
+│   │   ├── ChatWidget.js
+│   │   └── index.js
+│   ├── package.json
+│   └── vercel.json
+│
+└── render.yaml
+```
+
+## ⚙️ Backend Setup
+1. Create a virtual environment:
+```bash
 python -m venv venv
 venv\Scripts\activate
-2. Install dependencies
-bash
+```
+2. Install dependencies:
+```bash
+cd backend
 pip install -r requirements.txt
-3. Add environment variables
-Create .env inside backend/:
-
-Code
+```
+3. Add environment variables in `backend/.env`:
+```env
 GROQ_API_KEY=your_key
 PINECONE_API_KEY=your_key
 PINECONE_INDEX_NAME=rag-chatbot
-4. Add PDFs
-Place your documents inside:
-
-Code
-backend/docs/
-5. Run ingestion
-bash
+```
+4. Add PDFs to `backend/docs/`.
+5. Run ingestion:
+```bash
 python ingest/ingest.py
-6. Start the API
-bash
+```
+6. Start the API:
+```bash
 uvicorn app.main:app --reload
-API runs at:
+```
 
-Code
+Local backend URL:
+```text
 http://localhost:8000
-💬 Frontend Setup (React)
-1. Install dependencies
-bash
+```
+
+## 💬 Frontend Setup
+1. Install dependencies:
+```bash
 cd frontend
 npm install
-2. Set API URL
-Inside your widget:
-
-js
-const API_URL = "http://localhost:8000";
-3. Start development server
-bash
+```
+2. Start the React app:
+```bash
 npm start
-Frontend runs at:
+```
 
-Code
+Local frontend URL:
+```text
 http://localhost:3000
-🔌 API Usage
-POST /chat
-Request:
+```
 
-json
+## 🔌 API Usage
+**POST** `/chat`
+
+Request body:
+```json
 {
   "message": "your question"
 }
-Response:
+```
 
-json
+Response body:
+```json
 {
   "question": "...",
   "answer": "..."
 }
-🚀 Deployment Guide
-Backend Deployment (Render)
-Push backend to GitHub
+```
 
-Add start.sh:
+## 🚀 Deployment Guide
+### Backend Deployment (Render)
+1. Push the repo to GitHub.
+2. Ensure `render.yaml` is at the repository root.
+3. Configure Render to use Docker and `backend/Dockerfile`.
+4. Set these environment variables in Render:
+   - `GROQ_API_KEY`
+   - `PINECONE_API_KEY`
+   - `PINECONE_INDEX_NAME=rag-chatbot`
+5. Deploy and note your backend URL.
 
-bash
-uvicorn app.main:app --host 0.0.0.0 --port $PORT
-Add environment variables in Render dashboard
+### Frontend Deployment (Vercel)
+1. Deploy the `frontend/` folder as the project root.
+2. Set `Build Command` to:
+```text
+npm run build
+```
+3. Set `Output Directory` to:
+```text
+build
+```
+4. Add this environment variable in Vercel:
+   - `REACT_APP_BACKEND_URL=https://your-backend.onrender.com`
+5. Deploy.
 
-Deploy as a Web Service
+## 🔧 Important Notes
+- The frontend reads the backend endpoint from `REACT_APP_BACKEND_URL`.
+- `frontend/vercel.json` is configured to serve static assets and SPA routes correctly.
+- If you see a white page in production, check the browser console and confirm the Vercel env var.
 
-Render will give you a URL like:
-
-Code
-https://your-backend.onrender.com
-Frontend Deployment (Vercel)
-Push frontend to GitHub
-
-Update API URL:
-
-js
-const API_URL = "https://your-backend.onrender.com";
-Deploy on Vercel
-
-Your chatbot widget becomes publicly accessible.
-
-🧩 Embedding the Chat Widget
-jsx
+## 🧩 Embedding the Chat Widget
+In `frontend/src/App.js`:
+```jsx
 import ChatWidget from "./ChatWidget";
 
 function App() {
-  return <ChatWidget />;
+  return (
+    <div>
+      <ChatWidget />
+    </div>
+  );
 }
+
+export default App;
+```
