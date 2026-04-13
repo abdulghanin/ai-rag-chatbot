@@ -18,7 +18,7 @@ export default function ChatWidget() {
   setLoading(true);
 
   try {
-    const API_URL = "https://ai-rag-chatbot-euw3.onrender.com";
+    const API_URL = process.env.REACT_APP_BACKEND_URL || "https://ai-rag-chatbot-backend.onrender.com";
 
     const res = await axios.post(
       `${API_URL}/chat`,
