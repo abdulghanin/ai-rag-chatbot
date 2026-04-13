@@ -11,11 +11,27 @@
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/robots.txt"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
   ],
   "env": {
-    "REACT_APP_BACKEND_URL": "https://ai-rag-chatbot-euw3.onrender.com"
+    "REACT_APP_BACKEND_URL": "https://ai-rag-chatbot-backend.onrender.com"
   }
 }
